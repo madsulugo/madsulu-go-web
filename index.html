@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>¿Quién está viendo?</title>
+  <style>
+  body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: radial-gradient(ellipse at center, #000000 0%, #1a1a1a 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+  }
+
+  header {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    user-select: none;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 0 0 12px rgba(200, 200, 200, 0.4);
+  }
+
+  .settings-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .settings-icon svg {
+    fill: #ffffff;
+    width: 64px;
+    height: 64px;
+    display: block;
+    filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 5px #888888);
+  }
+
+  .profiles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 350px;
+    width: 100%;
+  }
+
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    margin-bottom: 10px;
+    object-fit: cover;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4), 0 0 8px rgba(200, 200, 200, 0.3);
+  }
+
+  .profile span {
+    font-size: 14px;
+    text-align: center;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .delete-btn,
+  .edit-btn {
+    position: absolute;
+    top: -18px;
+    border: none;
+    color: white;
+    font-size: 26px;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .delete-btn {
+    right: -18px;
+    background: #333333;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+
+  .edit-btn {
+    left: -18px;
+    background: #888888;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+  }
+
+  .add-profile {
+    width: 80px;
+    height: 80px;
+    border: 2px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 48px;
+    font-weight: bold;
+    user-select: none;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .add-profile:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .avatar-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .avatar-options img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    user-select: none;
+    transition: transform 0.2s;
+  }
+
+  .avatar-options img:hover {
+    transform: scale(1.05);
+  }
+
+  .avatar-options img.selected {
+    border-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+
+  @media (max-width: 400px) {
+    .profile img {
+      width: 70px;
+      height: 70px;
+    }
+    .avatar-options img {
+      width: 50px;
+      height: 50px;
+    }
+    header {
+      max-width: 100%;
+      padding: 0 10px;
+    }
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    color: white;
+    padding: 20px;
+    user-select: none;
+  }
+
+  .overlay input[type="text"] {
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    width: 250px;
+    margin-bottom: 15px;
+    text-align: center;
+    background: #1a1a1a;
+    color: #ffffff;
+  }
+
+  .overlay h2 {
+    margin-bottom: 15px;
+    user-select: none;
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffffff;
+  }
+
+  .overlay label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+
+  .overlay .btn-group {
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+  },
+
+  .overlay button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    color: white;
+  }
+
+  .btn-save {
+    background-color: #444444;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  }
+
+  .btn-cancel {
+    background-color: #222222;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  }
+
+
+</style>
+</head>
+<!-- Fondo bloqueador -->
+<div id="fondo-bloqueo" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9998;
+"></div>
+
+<!-- Mensaje de advertencia -->
+<div id="advertencia" style="
+  display: none;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  border: 2px solid #ff4444;
+  box-shadow: 0 0 15px #ff4444;
+  max-width: 90%;
+  color: white;
+  font-family: Arial, sans-serif;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  animation: fadeIn 0.5s ease-in-out;
+">
+  <div style="font-size: 3rem; margin-bottom: 1rem; animation: blink 1s infinite;">⚠️</div>
+  <h1 style="color: #ff4444; margin-bottom: 1rem;">¡UPS! NO TIENES CONEXIÓN</h1>
+  <p>Revisa la conexión a internet y asegúrate de que funcione y que tu dispositivo está conectado al internet.</p>
+  <p>Este mensaje desaparecerá cuando la conexión se haya restablecido.</p>
+</div>
+
+<!-- Animaciones -->
+<style>
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+  }
+</style>
+
+<!-- Script de detección -->
+<script>
+  const advertencia = document.getElementById('advertencia');
+  const fondo = document.getElementById('fondo-bloqueo');
+
+  async function verificarConexionEstable() {
+  // 1. Si el navegador no está en línea
+  if (!navigator.onLine) {
+    advertencia.style.display = 'block';
+    fondo.style.display = 'block';
+    return;
+  }
+
+  // 2. Detectar si estás usando datos móviles
+  if (navigator.connection && navigator.connection.type && navigator.connection.type !== 'wifi') {
+    // No mostrar advertencia de "sin conexión" si tienes datos móviles
+    advertencia.style.display = 'none';
+    fondo.style.display = 'none';
+    return;
+  } else if (navigator.connection && navigator.connection.effectiveType && navigator.connection.effectiveType !== 'wifi') {
+    // Caso para navegadores modernos con `effectiveType`
+    advertencia.style.display = 'none';
+    fondo.style.display = 'none';
+    return;
+  }
+
+  // 3. Verificar conexión solo para Wi-Fi
+  try {
+    const controlador = new AbortController();
+    const timeout = setTimeout(() => controlador.abort(), 3000);
+
+    await fetch("https://www.gstatic.com/generate_204", { signal: controlador.signal });
+
+    clearTimeout(timeout);
+    advertencia.style.display = 'none';
+    fondo.style.display = 'none';
+  } catch {
+    advertencia.style.display = 'block';
+    fondo.style.display = 'block';
+  }
+}
+</script>
+<body>
+
+<div id="mobile-warning" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ff0000;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  padding: 8px;
+  z-index: 10000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+">
+  ⚠️ ADVERTENCIA: Estás usando Datos móviles. Pueden encontrarse mas errores de lo común
+</div>
+
+  <header>
+    <h1>¿Quién está viendo?</h1>
+    <div class="settings-icon" onclick="window.location.href='go:ajustes'" title="Configuración">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.06-.94l2.03-1.58a.5.5 0 00.11-.63l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7.007 7.007 0 00-1.62-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54a6.94 6.94 0 00-1.62.94l-2.39-.96a.5.5 0 00-.6.22l-1.92 3.32a.5.5 0 00.11.63l2.03 1.58c-.04.3-.06.61-.06.94s.02.64.06.94l-2.03 1.58a.5.5 0 00-.11.63l1.92 3.32a.5.5 0 00.6.22l2.39-.96c.5.38 1.05.7 1.62.94l.36 2.54a.5.5 0 00.5.42h3.84a.5.5 0 00.5-.42l.36-2.54c.57-.24 1.12-.56 1.62-.94l2.39.96a.5.5 0 00.6-.22l1.92-3.32a.5.5 0 00-.11-.63l-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"></path>
+      </svg>
+    </div>
+  </header>
+
+  <div class="profiles" id="profiles"></div>
+
+  <script>
+    const STORAGE_KEY = "madsulu_profiles";
+    const profilesContainer = document.getElementById("profiles");
+
+    const avatars = {
+      "GO": "https://files.catbox.moe/ltcle2.png",
+      "GO KIDS": "https://files.catbox.moe/wz8ycs.png",
+      "Pancho": "https://files.catbox.moe/jyktqo.png",
+      "Las CaliFornias": "https://files.catbox.moe/ilng52.png",
+      "Coñaco": "https://files.catbox.moe/21m8vk.png",
+      "Calamardo triston": "https://files.catbox.moe/lvh2uh.png",
+      "bebé dinosaurio": "https://files.catbox.moe/4mieyf.png",
+      "NPC": "https://files.catbox.moe/i6zdic.png",
+      "pilah": "https://files.catbox.moe/vqbrlp.png",
+      "chetto's": "https://files.catbox.moe/948h5v.png",
+      "V4L3R": "https://files.catbox.moe/cv8ii6.png",
+      "Lingote": "https://files.catbox.moe/a1ibd7.png",
+      "Greenman Jackson": "https://files.catbox.moe/oriq8d.png",
+      "Livedia": "https://files.catbox.moe/87v5xx.png",
+      "LAEF": "https://files.catbox.moe/grefua.png",
+      "Bolavia": "https://files.catbox.moe/lyqezt.png",
+      "Famil": "https://files.catbox.moe/eez2u4.png",
+      "ChilenoBall":
+"https://files.catbox.moe/aibx1o.png",
+      "Gabi":
+"https://files.catbox.moe/3y518n.png"
+    };
+
+    const kidsForbidden = new Set(["Coñaco", "pilah", "V4L3R", "LAEF", "Bolavia"]);
+    let profiles = [];
+
+    function loadProfiles() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      profiles = data ? JSON.parse(data) : [];
+    }
+
+    function saveProfiles() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+    }
+
+    function renderProfiles() {
+      profilesContainer.innerHTML = "";
+      profiles.forEach((profile, index) => {
+        const div = document.createElement("div");
+        div.className = "profile";
+        div.innerHTML = `
+          <button class="edit-btn" onclick="editProfile(${index}, event)" title="Editar perfil">✎</button>
+          <button class="delete-btn" onclick="deleteProfile(${index}, event)" title="Eliminar perfil">×</button>
+          <img src="${profile.avatar}" alt="${profile.name}" />
+          <span>${profile.name}</span>
+          <span style="font-size:12px; font-style: italic;">${profile.kids ? "Kids" : ""}</span>
+        `;
+        div.onclick = () => {
+          const sectionId = profile.kids ? "IDI3" : "IDI2";
+          window.location.href = "go:" + sectionId;
+        };
+        profilesContainer.appendChild(div);
+      });
+
+      const addDiv = document.createElement("div");
+      addDiv.className = "profile add-profile";
+      addDiv.textContent = "+";
+      addDiv.title = "Agregar perfil";
+      addDiv.onclick = createProfile;
+      profilesContainer.appendChild(addDiv);
+    }
+
+    function createProfile() {
+      openProfileEditor();
+    }
+
+    function editProfile(index, event) {
+      event.stopPropagation();
+      openProfileEditor(profiles[index], index);
+    }
+
+    function openProfileEditor(profile = null, index = null) {
+      const overlay = document.createElement("div");
+      overlay.className = "overlay";
+      overlay.innerHTML = `
+        <h2>${profile ? "Editar perfil" : "Nuevo perfil"}</h2>
+        <input type="text" placeholder="Nombre" value="${profile ? profile.name : ""}" />
+        <label><input type="checkbox" ${profile?.kids ? "checked" : ""} /> Cuenta Kids</label>
+        <div class="avatar-options"></div>
+        <div class="btn-group">
+          <button class="btn-save">Guardar</button>
+          <button class="btn-cancel">Cancelar</button>
+        </div>
+      `;
+      const inputName = overlay.querySelector("input[type=text]");
+      const checkbox = overlay.querySelector("input[type=checkbox]");
+      const avatarDiv = overlay.querySelector(".avatar-options");
+      let selectedAvatar = profile?.avatar || null;
+
+      function renderAvatars() {
+        avatarDiv.innerHTML = "";
+        Object.entries(avatars).forEach(([name, url]) => {
+          const isKids = checkbox.checked;
+          if (isKids && name === "GO") return;
+          if (!isKids && name === "GO KIDS") return;
+          if (isKids && kidsForbidden.has(name)) return;
+          if (profiles.some((p, i) => p.avatar === url && i !== index)) return;
+          const img = document.createElement("img");
+          img.src = url;
+          img.title = name;
+          if (url === selectedAvatar) img.classList.add("selected");
+          img.onclick = () => {
+            selectedAvatar = url;
+            avatarDiv.querySelectorAll("img").forEach(i => i.classList.remove("selected"));
+            img.classList.add("selected");
+          };
+          avatarDiv.appendChild(img);
+        });
+      }
+
+      checkbox.onchange = () => {
+        const avatarName = Object.entries(avatars).find(([n, u]) => u === selectedAvatar)?.[0];
+        if (checkbox.checked && (kidsForbidden.has(avatarName) || avatarName === "GO")) selectedAvatar = null;
+        if (!checkbox.checked && avatarName === "GO KIDS") selectedAvatar = null;
+        renderAvatars();
+      };
+
+      renderAvatars();
+
+      overlay.querySelector(".btn-save").onclick = () => {
+        const name = inputName.value.trim();
+        if (!name) return alert("Por favor, ingresa un nombre.");
+        if (profiles.some((p, i) => p.name.toLowerCase() === name.toLowerCase() && i !== index))
+          return alert("El nombre ya existe.");
+        const isKids = checkbox.checked;
+        const finalAvatar = selectedAvatar || (isKids ? avatars["GO KIDS"] : avatars["GO"]);
+        const newProfile = { name, kids: isKids, avatar: finalAvatar };
+        if (index !== null) profiles[index] = newProfile;
+        else profiles.push(newProfile);
+        saveProfiles();
+        renderProfiles();
+        document.body.removeChild(overlay);
+      };
+
+      overlay.querySelector(".btn-cancel").onclick = () => {
+        document.body.removeChild(overlay);
+      };
+
+      document.body.appendChild(overlay);
+      inputName.focus();
+    }
+
+    function deleteProfile(index, event) {
+      event.stopPropagation();
+      if (confirm(`¿Eliminar perfil "${profiles[index].name}"?`)) {
+        profiles.splice(index, 1);
+        saveProfiles();
+        renderProfiles();
+      }
+    }
+
+    // Carga inicial
+    loadProfiles();
+    renderProfiles();
+  </script>
+
+<script>
+  function verificarTipoConexion() {
+    const warningBar = document.getElementById('mobile-warning');
+    if (navigator.connection && navigator.connection.type) {
+      // Para navegadores con `navigator.connection.type`
+      if (navigator.connection.type !== 'wifi') {
+        warningBar.style.display = 'block';
+      } else {
+        warningBar.style.display = 'none';
+      }
+    } else if (navigator.connection && navigator.connection.effectiveType) {
+      // Para navegadores modernos (effectiveType)
+      if (navigator.connection.effectiveType.includes('2g') || 
+          navigator.connection.effectiveType.includes('3g') || 
+          navigator.connection.effectiveType.includes('4g')) {
+        warningBar.style.display = 'block';
+      } else {
+        warningBar.style.display = 'none';
+      }
+    }
+  }
+
+  if (navigator.connection) {
+    navigator.connection.addEventListener('change', verificarTipoConexion);
+    verificarTipoConexion();
+  }
+</script>
+
+</body>
+</html>
