@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Splash Video Streaming</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: black;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    #video-container {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    video {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      background: black;
+    }
+
+    #loading-circle {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      border: 6px solid #888;
+      border-top: 6px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 2;
+    }
+
+    @keyframes spin {
+      to { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    #animation-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    #animation-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+      animation: fadeinout 2s forwards;
+    }
+
+    @keyframes fadeinout {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    dialog {
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .yes-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .no-btn {
+      background: #3498db;
+      color: white;
+    }
+
+    /* Fondo bloqueo internet */
+    #fondo-bloqueo {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9998;
+    }
+
+    /* Mensaje sin internet */
+    #advertencia {
+      display: none;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      border: 2px solid #ff4444;
+      box-shadow: 0 0 15px #ff4444;
+      max-width: 90%;
+      color: white;
+      font-family: Arial, sans-serif;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    /* Aviso móvil incompatible */
+    #aviso-movil {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.95);
+      color: white;
+      z-index: 10000;
+      text-align: center;
+      padding-top: 20%;
+      font-size: 1.2em;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    #aviso-movil button {
+      display: block;
+      margin: 15px auto;
+      padding: 12px 25px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn-saltar {
+      background: #3498db;
+      color: white;
+    }
+    .btn-playstore {
+      background: #2ecc71;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Fondo y mensaje sin conexión -->
+<div id="fondo-bloqueo"></div>
+<div id="advertencia">
+  <div style="font-size: 3rem; margin-bottom: 1rem; animation: blink 1s infinite;">⚠️</div>
+  <h1 style="color: #ff4444; margin-bottom: 1rem;">¡UPS! NO TIENES CONEXIÓN</h1>
+  <p>Revisa tu conexión a internet. Este mensaje desaparecerá cuando se restablezca.</p>
+</div>
+
+<!-- Aviso móvil -->
+<div id="aviso-movil">
+  <h2>📱 ESTÁS EN UN DISPOSITIVO QUE PODRÍA NO SER COMPATIBLE</h2>
+  <p>Puedes saltar este aviso o instalar MadSulu GO desde Play Store.</p>
+  <button class="btn-saltar" onclick="location.href='seleccion.html'">Saltar</button>
+  <button class="btn-playstore" onclick="window.location.href='https://play.google.com/store/apps/details?id=flux.mandajoshua'">Descargar en Play Store</button>
+</div>
+
+<!-- Contenedor del video -->
+<div id="video-container">
+  <video id="splash-video" preload="auto" poster="https://files.catbox.moe/wndevz.webp" muted playsinline>
+    <source src="https://files.catbox.moe/ymco0f.mp4" type="video/mp4">
+    Tu navegador no soporta video HTML5.
+  </video>
+  <div id="loading-circle"></div>
+</div>
+
+<div id="animation-overlay"></div>
+
+<dialog id="exitDialog">
+  <p>¿Deseas salir de MadSulu GO?</p>
+  <button class="yes-btn" onclick="window.location.href='http://action_exit'">Sí</button>
+  <button class="no-btn" onclick="window.location.href='seleccion.html'">No</button>
+</dialog>
+
+<script>
+  const advertencia = document.getElementById('advertencia');
+  const fondo = document.getElementById('fondo-bloqueo');
+
+  async function verificarConexionEstable() {
+    try {
+      const controlador = new AbortController();
+      const timeout = setTimeout(() => controlador.abort(), 3000);
+
+      await fetch("https://www.google.com/favicon.ico", { method: 'HEAD', mode: 'no-cors', signal: controlador.signal });
+
+      clearTimeout(timeout);
+      advertencia.style.display = 'none';
+      fondo.style.display = 'none';
+    } catch {
+      advertencia.style.display = 'block';
+      fondo.style.display = 'block';
+    }
+  }
+
+  window.addEventListener('online', verificarConexionEstable);
+  window.addEventListener('offline', () => {
+    advertencia.style.display = 'block';
+    fondo.style.display = 'block';
+  });
+
+  setInterval(verificarConexionEstable, 5000);
+  verificarConexionEstable();
+
+  // Detectar móvil
+  const esMovil = /android|iphone|ipad|ipod|windows phone/i.test(navigator.userAgent);
+  if (esMovil) {
+    document.getElementById('aviso-movil').style.display = 'block';
+    document.getElementById('video-container').style.display = 'none';
+  } else {
+    iniciarSplash();
+  }
+
+  function iniciarSplash() {
+    const video = document.getElementById('splash-video');
+    const loadingCircle = document.getElementById('loading-circle');
+    const overlay = document.getElementById('animation-overlay');
+    const exitDialog = document.getElementById('exitDialog');
+
+    setTimeout(() => {
+      loadingCircle.style.display = 'none';
+      video.play();
+    }, 5000);
+
+    video.addEventListener('ended', () => {
+      overlay.classList.add('show');
+      setTimeout(() => {
+        window.location.href = 'seleccion.html';
+      }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
