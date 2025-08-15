@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pancho: La serie</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      color: white;
+      background: linear-gradient(to bottom right, green, blue);
+      overflow: hidden;
+      transition: background 0.8s ease;
+    }
+    .container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform-origin: center center;
+    }
+    .header {
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .cover {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .cover img {
+      width: 200px;
+      border-radius: 10px;
+    }
+    .description {
+      max-width: 60%;
+    }
+    .description .meta {
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+    .rating-square {
+      margin-top: 10px;
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      display: block;
+    }
+    .episodes {
+      overflow-y: auto;
+      padding-right: 10px;
+      height: 100%;
+    }
+    .episode {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+      padding: 10px;
+      background-color: rgba(0,0,0,0.3);
+      margin-bottom: 10px;
+      border-radius: 8px;
+      outline: none;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: fadeIn 0.5s ease forwards;
+      transition: background-color 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .episode img {
+      width: 100px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .episode-info {
+      flex: 1;
+    }
+    .episode .duration {
+      font-size: 0.8em;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+    .episode:focus {
+      background-color: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      transform: scale(1.03);
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 3px;
+    }
+
+    /* 🎉 Animación de mensaje y confetti */
+    .winner-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .winner-message {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 90%;
+      font-size: 2em;
+      color: #fff;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px 20px;
+      border-radius: 12px;
+      text-shadow: 0 0 10px #000;
+      animation: fadeMessage 6s ease forwards;
+    }
+
+    @keyframes fadeMessage {
+      0% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+      10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+    }
+
+    .confetti {
+      position: absolute;
+      font-size: 40px;
+      opacity: 0.8;
+      animation: floatUp 5s ease-in-out forwards;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🎉 Banner de ganador -->
+  <div class="winner-banner">
+    <div class="confetti-container"></div>
+    <div class="winner-message">🎉 Esta serie es la ganadora de MadSulu GO CUP, ¿lo quieres ver? 🎉</div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="container" id="main-container">
+    <div class="header">
+      <div class="cover">
+        <img src="https://files.catbox.moe/bg7dhd.png" alt="Portada de la serie" />
+        <div class="description">
+          <h1>Pancho: La serie</h1>
+          <p>Pancho es un hot dog vegetariano que simplemente vive una vida normal, pero eso cambió cuando mientras hablaba con su amigo "Hamburguesa" los dos fueron secuestrados</p>
+          <div class="meta">
+            <strong>Productora:</strong> Manda-Joshua Associations, Incorporated.<br/>
+            <strong>Creador:</strong> Mm Manda<br/>
+            <strong>Calificación en "Roasters!":</strong> sin calificación
+          </div>
+          <img src="https://files.catbox.moe/ygomer.png" alt="Clasificación +7" class="rating-square" />
+        </div>
+      </div>
+    </div>
+
+    <div class="episodes" tabindex="0">
+      <div class="episode" tabindex="1" onclick="showExitAnimation('go:PLS.1')">
+        <img src="https://files.catbox.moe/4fmwzg.png" alt="Ep 1">
+        <div class="episode-info">
+          <h3>Episodio 1: Como jugar Pancho</h3>
+          <p>Pancho aparece en un arbusto naranja/amarillento, y ve que está en un videojuego...</p>
+          <p class="duration">⏱️ Duración: 2 min</p>
+        </div>
+      </div>
+      <div class="episode" tabindex="2" onclick="showExitAnimation('go:PLS.2')">
+        <img src="https://files.catbox.moe/n5dqwg.png" alt="Ep 2">
+        <div class="episode-info">
+          <h3>Episodio 2: ¿Más banderas?</h3>
+          <p>Pancho revive en el videojuego y logra pasar la fase especial...</p>
+          <p class="duration">⏱️ Duración: 1 min</p>
+        </div>
+      </div>
+      <div class="episode" tabindex="3" onclick="showExitAnimation('go:PLS.3')">
+        <img src="https://files.catbox.moe/ochk70.png" alt="Ep 3">
+        <div class="episode-info">
+          <h3>Episodio 3: El verdadero inicio</h3>
+          <p>Pancho se encuentra con Rocky, quien le habla sobre el Hombre Tutor...</p>
+          <p class="duration">⏱️ Duración: 2 min</p>
+        </div>
+      </div>
+      <div class="episode" tabindex="4" onclick="showExitAnimation('go:PLS.4')">
+        <img src="https://files.catbox.moe/qwg4hl.png" alt="Ep 4">
+        <div class="episode-info">
+          <h3>Episodio 4: Multijugador</h3>
+          <p>El Hombre Tutor lleva a Pancho a un nuevo modo con NutriaKGJ...</p>
+          <p class="duration">⏱️ Duración: 2 min</p>
+        </div>
+      </div>
+      <div class="episode" tabindex="5" onclick="showExitAnimation('go:PLS.5')">
+        <img src="https://files.catbox.moe/5145sc.png" alt="Ep 5">
+        <div class="episode-info">
+          <h3>Episodio 5: ¿El nivel final?</h3>
+          <p>Pancho es atacado por un clon Cyborg y presencia la muerte de Rocky...</p>
+          <p class="duration">⏱️ Duración: 3 min</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎉 Script confetti -->
+  <script>
+    const container = document.getElementById('main-container');
+    const confettiContainer = document.querySelector('.confetti-container');
+    let goCommand = '';
+
+    function createConfetti() {
+      const emoji = document.createElement('div');
+      emoji.classList.add('confetti');
+      emoji.innerText = '🎉';
+      emoji.style.left = Math.random() * 100 + 'vw';
+      emoji.style.animationDuration = (4 + Math.random() * 2) + 's';
+      confettiContainer.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 6000);
+    }
+
+    for (let i = 0; i < 40; i++) {
+      setTimeout(createConfetti, i * 120);
+    }
+
+    function showExitAnimation(command) {
+      goCommand = command;
+      container.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      container.style.opacity = '0';
+      container.style.transform = 'scale(1.2)';
+      container.addEventListener('transitionend', onExitAnimationEnd);
+    }
+
+    function onExitAnimationEnd(e) {
+      if (e.propertyName === 'opacity' && container.style.opacity === '0') {
+        container.removeEventListener('transitionend', onExitAnimationEnd);
+        document.body.style.background = 'black';
+        setTimeout(function () {
+          container.style.opacity = '1';
+          container.style.transform = 'scale(1)';
+          document.body.style.background = '';
+        }, 2000);
+        setTimeout(function () {
+          location.href = goCommand;
+        }, 100);
+      }
+    }
+  </script>
+</body>
+</html>
