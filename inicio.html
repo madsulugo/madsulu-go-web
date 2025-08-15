@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MadSulu GO - Selección de series</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: radial-gradient(ellipse at center, #0a0a0a 0%, #121b2b 100%);
+      color: #e0ffe0;
+    }
+
+    header {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    header img {
+      max-width: 250px;
+      height: auto;
+    }
+
+    h2 {
+      margin: 1rem 0 0.5rem 1rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.6), 0 0 12px rgba(150, 150, 150, 0.4);
+    }
+
+    .categoria { margin-bottom: 2rem; }
+
+    .scroll-row {
+      display: flex;
+      overflow-x: auto;
+      padding: 0 1rem;
+      gap: 1rem;
+    }
+
+    .scroll-row::-webkit-scrollbar { height: 8px; }
+    .scroll-row::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+    }
+
+    .serie {
+      position: relative;
+      flex: 0 0 auto;
+      width: 156px;
+      border-radius: 16px;
+      overflow: hidden;
+      background-color: #222;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .serie:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .serie img {
+      width: 100%;
+      height: 101px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .info { padding: 0.4rem; background: #111; }
+
+    .info .nombre {
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .info .edad { font-size: 0.85rem; color: #bbb; }
+
+    .proximamente { opacity: 0.5; cursor: not-allowed; }
+    .proximamente .info::after {
+      content: "PRÓXIMAMENTE";
+      display: block;
+      color: #f88;
+      font-weight: bold;
+      margin-top: 0.3rem;
+    }
+
+    .banner {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      height: 200px;
+      margin: 20px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .banner h2 { margin: 0 0 15px; font-size: 24px; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
+    .banner a { display: inline-block; padding: 8px 16px; border: 2px solid white; border-radius: 10px; text-decoration: none; color: white; font-size: 16px; transition: all 0.3s ease; }
+    .banner a:hover { background: white; color: #111; }
+
+    /* Buscador */
+    .buscador-container {
+      position: relative;
+      max-width: 520px;
+      margin: 15px auto;
+      padding: 0 1rem;
+    }
+
+    #buscador {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .sugerencias {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: #0b0b0b;
+      border: 1px solid #444;
+      border-radius: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      display: none;
+      z-index: 30;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    }
+
+    .sugerencia {
+      padding: 10px 12px;
+      cursor: pointer;
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sugerencia:last-child { border-bottom: none; }
+    .sugerencia:hover { background: rgba(255,255,255,0.03); }
+
+    .sugerencia .mini {
+      width: 56px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .sugerencias.show { display: block; animation: desplegar 350ms ease; transform-origin: top center; }
+    @keyframes desplegar {
+      0% { transform: scaleY(0.6); opacity: 0; }
+      60% { transform: scaleY(1.03); opacity: 1; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://files.catbox.moe/q8rwdm.png" alt="MadSulu GO Logo">
+</header>
+
+<!-- Buscador con ruleta de sugerencias -->
+<div class="buscador-container" aria-hidden="false">
+  <input type="search" id="buscador" placeholder="Buscar serie..." aria-label="Buscar serie">
+  <div id="sugerencias" class="sugerencias" role="listbox" aria-label="Sugerencias de series"></div>
+</div>
+
+<!-- Mensaje ganador -->
+<div id="mensajeCambio" style="background-color: #000; color: #fff; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 0 15px #fff; max-width: 700px; margin: 20px auto; font-family: Arial, sans-serif;">
+  <h2 style="margin-bottom: 10px;">¡PANCHO: LA SERIE GANADORA DE MADSULU GO CUP!</h2>
+  <p>PANCHO: LA SERIE SE CORONA COMO LA MEJOR SERIE DE MADSULU CUP. ¡GRACIAS A TODOS LOS QUE PARTICIPARON!</p>
+  <p style="margin-top: 15px; font-style: italic; color: #ccc;">Atte: Equipo de MadSulu GO</p>
+  <label style="display: block; margin-top: 15px; cursor: pointer;">
+    <input type="checkbox" id="nonMostrar" style="margin-right: 8px;">
+    No mostrar más este mensaje
+  </label>
+  <button id="btnAceptar" type="button" style="margin-top: 15px; padding: 8px 20px; background: #fff; color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+    Aceptar
+  </button>
+</div>
+<!-- Has visto recientemente -->
+<div class="categoria">
+  <h2>👀 Has visto recientemente</h2>
+  <div class="scroll-row" id="recientes-list" style="padding: 0 1rem;"></div>
+  <div style="max-width:520px;margin:8px auto;text-align:right;padding-right:1rem;">
+    <button id="clearRecientes" type="button" style="padding:6px 10px;border-radius:8px;border:none;cursor:pointer;background:#222;color:#fff;">Limpiar</button>
+  </div>
+</div>
+
+<!-- CATEGORÍAS Y SERIES (se mantiene el contenido visual que tenías) -->
+<div class="categoria">
+  <h2>🏆 MadSulu GO Cup</h2>
+  <div class="scroll-row">
+    <div class="serie" onclick="go('lff')">
+      <img src="https://files.catbox.moe/1axsuw.jpg" alt="Las Fumadas de Famil">
+      <div class="info"><div class="nombre">Las Fumadas de Famil</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/dgskst.png" alt="Pancho: El final">
+      <div class="info"><div class="nombre">Pancho: El final</div><div class="edad">+7 años</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 🎮 Acción y aventuras -->
+<div class="categoria">
+  <h2>🎮 Acción y aventuras</h2>
+  <div class="scroll-row">
+    <div class="serie" onclick="go('pls')">
+      <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
+      <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('cn')">
+      <img src="https://files.catbox.moe/zc0ht2.png" alt="Coñaco" />
+      <div class="info"><div class="nombre">Coñaco</div><div class="edad">Adolescentes</div></div>
+    </div>
+
+    <div class="serie" onclick="go('dlr')">
+      <img src="https://files.catbox.moe/2qikmp.png" alt="Demonic Legends" />
+      <div class="info"><div class="nombre">Demonic Legends</div><div class="edad">Adolescentes</div></div>
+    </div>
+
+    <div class="serie" onclick="go('ctm')">
+      <img src="https://files.catbox.moe/72hgd3.png" alt="CountryTubers Multiverso" />
+      <div class="info"><div class="nombre">CountryTubers Multiverso</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('lff')">
+      <img src="https://files.catbox.moe/1axsuw.jpg" alt="Las Fumadas de Famil" />
+      <div class="info"><div class="nombre">Las Fumadas de Famil</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/dgskst.png" alt="Pancho: El final" />
+      <div class="info"><div class="nombre">Pancho: El final</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/8tlgjo.png" alt="Venganza europea" />
+      <div class="info"><div class="nombre">Venganza europea</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/apa50t.png" alt="The Fr13nDzH1p Tapes" />
+      <div class="info"><div class="nombre">The Fr13nDzH1p Tapes</div><div class="edad">Adolescentes</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/q56yqg.png" alt="Locura por el multiverso" />
+      <div class="info"><div class="nombre">Locura por el multiverso</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/r5734h.png" alt="Oh dios: La película" />
+      <div class="info"><div class="nombre">Oh dios: La película</div><div class="edad">Adolescentes</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/uisvhx.png" alt="Joshua 2D Prime" />
+      <div class="info"><div class="nombre">Joshua 2D Prime</div><div class="edad">+7 años</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 🌐 Universos extraños y fantasía -->
+<div class="categoria">
+  <h2>🌐 Universos extraños y fantasía</h2>
+  <div class="scroll-row">
+    <div class="serie" onclick="go('pls')">
+      <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
+      <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('lc')">
+      <img src="https://files.catbox.moe/0b1zji.png" alt="Las Californias" />
+      <div class="info"><div class="nombre">Las Californias</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('lcc')">
+      <img src="https://files.catbox.moe/h8cro0.png" alt="CaliFornias Classic" />
+      <div class="info"><div class="nombre">CaliFornias Classic</div><div class="edad">Todos</div></div>
+    </div>
+
+    <div class="serie" onclick="go('ctm')">
+      <img src="https://files.catbox.moe/72hgd3.png" alt="CountryTubers Multiverso" />
+      <div class="info"><div class="nombre">CountryTubers Multiverso</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('dlr')">
+      <img src="https://files.catbox.moe/2qikmp.png" alt="Demonic Legends" />
+      <div class="info"><div class="nombre">Demonic Legends</div><div class="edad">Adolescentes</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/rzgjof.jpg" alt="LAEF" />
+      <div class="info"><div class="nombre">LAEF</div><div class="edad">Adolescentes</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/prsupd.png" alt="Chetto: La serie" />
+      <div class="info"><div class="nombre">Chetto: La serie</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/atnfkz.png" alt="Una película de Countryballs" />
+      <div class="info"><div class="nombre">Una película de Countryballs</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/dgskst.png" alt="Pancho: El final" />
+      <div class="info"><div class="nombre">Pancho: El final</div><div class="edad">+7 años</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 🤣 Comedias y parodias -->
+<div class="categoria">
+  <h2>🤣 Comedias y parodias</h2>
+  <div class="scroll-row">
+    <div class="serie" onclick="go('pls')">
+      <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
+      <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('btc')">
+      <img src="https://files.catbox.moe/5ym1pj.png" alt="Batalla Countrytuber" />
+      <div class="info"><div class="nombre">Batalla Countrytuber</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('ebd')">
+      <img src="https://files.catbox.moe/wr6k3n.png" alt="El bebé dinosaurio" />
+      <div class="info"><div class="nombre">El bebé dinosaurio</div><div class="edad">Todos</div></div>
+    </div>
+
+    <div class="serie" onclick="go('MJa')">
+      <img src="https://files.catbox.moe/ulh1ly.png" alt="MJaja Series" />
+      <div class="info"><div class="nombre">MJaja Series</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('lff')">
+      <img src="https://files.catbox.moe/1axsuw.jpg" alt="Las Fumadas de Famil" />
+      <div class="info"><div class="nombre">Las Fumadas de Famil</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('ctm')">
+      <img src="https://files.catbox.moe/72hgd3.png" alt="CountryTubers Multiverso" />
+      <div class="info"><div class="nombre">CountryTubers Multiverso</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/38wwos.png" alt="Chulin's Adventure Mania" />
+      <div class="info"><div class="nombre">Adventure Mania</div><div class="edad">Todos</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/m6uc4r.png" alt="Viajes con Chulin" />
+      <div class="info"><div class="nombre">Viajes con Chulin</div><div class="edad">Todos</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 󰔡 MadSulu Kids -->
+<div class="categoria">
+  <h2>󰔡 MadSulu Kids</h2>
+  <div class="scroll-row">
+    <div class="serie" onclick="go('pls')">
+      <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
+      <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('lc')">
+      <img src="https://files.catbox.moe/0b1zji.png" alt="Las Californias" />
+      <div class="info"><div class="nombre">Las Californias</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie" onclick="go('lcc')">
+      <img src="https://files.catbox.moe/h8cro0.png" alt="CaliFornias Classic" />
+      <div class="info"><div class="nombre">CaliFornias Classic</div><div class="edad">Todos</div></div>
+    </div>
+
+    <div class="serie" onclick="go('ebd')">
+      <img src="https://files.catbox.moe/wr6k3n.png" alt="El bebé dinosaurio" />
+      <div class="info"><div class="nombre">El bebé dinosaurio</div><div class="edad">Todos</div></div>
+    </div>
+
+    <div class="serie" onclick="go('MJa')">
+      <img src="https://files.catbox.moe/ulh1ly.png" alt="MJaja Series" />
+      <div class="info"><div class="nombre">MJaja Series</div><div class="edad">+10 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/prsupd.png" alt="Chetto: La serie" />
+      <div class="info"><div class="nombre">Chetto: La serie</div><div class="edad">+7 años</div></div>
+    </div>
+
+    <div class="serie proximamente">
+      <img src="https://files.catbox.moe/uisvhx.png" alt="Joshua 2D Prime" />
+      <div class="info"><div class="nombre">Joshua 2D Prime</div><div class="edad">+7 años</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 🎨 Creador a creador -->
+<div class="categoria">
+  <h2>🎨 Creador a creador</h2>
+  <div class="scroll-row">
+    <div class="serie" onclick="go('dt')">
+      <img src="https://files.catbox.moe/rlxo4n.png" alt="Dimoxtube" />
+      <div class="info"><div class="nombre">Dimoxtube</div><div class="edad">-</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    // Helper: obtén la lista global de series (intenta varias formas)
+    function getAllSeries(){
+      try{
+        if (typeof series !== 'undefined' && Array.isArray(series)) return series;
+      }catch(e){}
+      if (window.series && Array.isArray(window.series)) return window.series;
+      if (window._series && Array.isArray(window._series)) return window._series;
+      return [];
+    }
+
+    function addToRecientes(ref){
+      try{
+        const all = getAllSeries();
+        const s = (all.find ? all.find(x => x.ref === ref) : undefined) || { nombre: ref, img: '' };
+        const key = 'madsulu_recientes';
+        let arr = JSON.parse(localStorage.getItem(key) || '[]');
+        // eliminar duplicados
+        arr = arr.filter(a => a.ref !== ref);
+        // añadir al inicio (guardamos también nombre e imagen actuales si existen)
+        arr.unshift({ ref: s.ref || ref, nombre: s.nombre || ref, img: s.img || '', ts: Date.now() });
+        // limitar a 8 items
+        if (arr.length > 8) arr = arr.slice(0,8);
+        localStorage.setItem(key, JSON.stringify(arr));
+        renderRecientes();
+      } catch (e) {
+        console.warn('Error guardando recientes', e);
+      }
+    }
+
+    function renderRecientes(){
+      const key = 'madsulu_recientes';
+      const container = document.getElementById('recientes-list');
+      if (!container) return;
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      container.innerHTML = '';
+      if (!arr.length) {
+        container.innerHTML = '<p style="color:#bbb;padding:12px">No has visto nada pedazo de mandarina 👿👿👿👿</p>';
+        return;
+      }
+      const all = getAllSeries();
+      arr.forEach(item => {
+        // intenta completar nombre/img usando la lista de series si falta o es genérico
+        const match = (all.find ? all.find(s => s.ref === item.ref) : undefined) || {};
+        const nombre = match.nombre || item.nombre || item.ref;
+        const img = match.img || item.img || 'https://files.catbox.moe/bg7dhd.png';
+
+        const div = document.createElement('div');
+        div.className = 'serie';
+        div.style.width = '140px';
+        div.style.marginRight = '10px';
+        div.onclick = () => { window.go && window.go(item.ref); };
+        div.innerHTML = '<img src="'+img+'" alt="'+nombre+'">'+
+                        '<div class="info"><div class="nombre">'+nombre+'</div></div>';
+        container.appendChild(div);
+      });
+    }
+
+    // Wrapper: interceptar llamadas a go(ref) para guardar en recientes antes de navegar.
+    // Si go ya existe, envolvemos; si no, solo exponemos addToRecientes para llamadas manuales.
+    function wrapGo(){
+      const original = window.go;
+      if (typeof original === 'function' && original._wrapped) return; // ya envuelto
+      function wrapped(ref){
+        try{ addToRecientes(ref); } catch(e){ console.warn(e); }
+        if (typeof original === 'function') return original(ref);
+        // fallback si original no existe
+        try{ window.location.href = 'go:' + ref; } catch { window.location.hash = 'go-' + ref; }
+      }
+      wrapped._wrapped = true;
+      window.go = wrapped;
+    }
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      // Intentamos renderizar cuando el DOM esté listo (la lista 'series' estará definida para entonces)
+      renderRecientes();
+      const clearBtn = document.getElementById('clearRecientes');
+      if (clearBtn) clearBtn.addEventListener('click', () => {
+        localStorage.removeItem('madsulu_recientes');
+        renderRecientes();
+      });
+      // Si go ya existe al cargar, envolverlo; si no, intentar envolver después
+      wrapGo();
+      // por si se define go más tarde (otro script), intentar envolver de nuevo tras 500ms
+      setTimeout(wrapGo, 500);
+      // Exponer addToRecientes por si se quiere usar manualmente desde consola u otros scripts
+      window.addToRecientes = addToRecientes;
+      window.renderRecientes = renderRecientes;
+    });
+
+  })();
+</script>
+
+<!-- SHORTS BANNER -->
+<div class="banner" style="background: linear-gradient(120deg, rgba(255,69,0,0.6), rgba(142,45,226,0.6)), url('https://files.catbox.moe/6ql4b0.gif') center/cover no-repeat;">
+  <div style="z-index: 2;">
+    <h2>descubre <br>madsulu fast momentos rapidos de series.</h2>
+    <a href="#" class="shorts-link" onclick="irAShorts(); return false;">Ir a Shorts</a>
+  </div>
+</div>
+
+<!-- INFO CREADORES BANNER -->
+<div class="banner" style="background: linear-gradient(120deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://files.catbox.moe/9wwyaq.png') center/cover no-repeat;">
+  <div style="z-index: 2;">
+    <h2>Mira la información<br>de nuestros creadores.</h2>
+    <a href="#" onclick="irADescripcion(); return false;">ver descripcion</a>
+  </div>
+</div>
+
+<script>
+  // Mostrar/ocultar mensaje ganador según localStorage
+  if (localStorage.getItem('nonMostrarMensajeCambio') === 'true') {
+    const msg = document.getElementById('mensajeCambio');
+    if (msg) msg.style.display = 'none';
+  }
+
+  document.getElementById('btnAceptar').addEventListener('click', () => {
+    const nonMostrar = document.getElementById('nonMostrar').checked;
+    if (nonMostrar) {
+      localStorage.setItem('nonMostrarMensajeCambio', 'true');
+    }
+    document.getElementById('mensajeCambio').style.display = 'none';
+  });
+
+  // Lista completa de series para el buscador
+  const series = [
+    { nombre: "Pancho", ref: "pls", img: "https://files.catbox.moe/bg7dhd.png" },
+    { nombre: "Las Fumadas de Famil", ref: "lff", img: "https://files.catbox.moe/1axsuw.jpg" },
+    { nombre: "Coñaco", ref: "cn", img: "https://files.catbox.moe/zc0ht2.png" },
+    { nombre: "Demonic Legends", ref: "dlr", img: "https://files.catbox.moe/2qikmp.png" },
+    { nombre: "CountryTubers Multiverso", ref: "ctm", img: "https://files.catbox.moe/72hgd3.png" },
+    { nombre: "Las Californias", ref: "lc", img: "https://files.catbox.moe/0b1zji.png" },
+    { nombre: "CaliFornias Classic", ref: "lcc", img: "https://files.catbox.moe/h8cro0.png" },
+    { nombre: "Batalla Countrytuber", ref: "btc", img: "https://files.catbox.moe/5ym1pj.png" },
+    { nombre: "El bebé dinosaurio", ref: "ebd", img: "https://files.catbox.moe/wr6k3n.png" },
+    { nombre: "MJaja Series", ref: "MJa", img: "https://files.catbox.moe/ulh1ly.png" },
+    { nombre: "Dimoxtube", ref: "dt", img: "https://files.catbox.moe/rlxo4n.png" },
+    { nombre: "Pancho: El final", ref: "pf", img: "https://files.catbox.moe/dgskst.png" },
+    { nombre: "Venganza europea", ref: "ve", img: "https://files.catbox.moe/8tlgjo.png" },
+    { nombre: "The Fr13nDzH1p Tapes", ref: "fr", img: "https://files.catbox.moe/apa50t.png" },
+    { nombre: "Locura por el multiverso", ref: "lpm", img: "https://files.catbox.moe/q56yqg.png" },
+    { nombre: "Oh dios: La película", ref: "od", img: "https://files.catbox.moe/r5734h.png" },
+    { nombre: "Joshua 2D Prime", ref: "j2p", img: "https://files.catbox.moe/uisvhx.png" },
+    { nombre: "LAEF", ref: "laef", img: "https://files.catbox.moe/rzgjof.jpg" },
+    { nombre: "Chetto: La serie", ref: "chetto", img: "https://files.catbox.moe/prsupd.png" },
+    { nombre: "Una película de Countryballs", ref: "cbmov", img: "https://files.catbox.moe/atnfkz.png" },
+    { nombre: "Adventure Mania", ref: "advm", img: "https://files.catbox.moe/38wwos.png" },
+    { nombre: "Viajes con Chulin", ref: "vch", img: "https://files.catbox.moe/m6uc4r.png" }
+  ];
+
+  const buscador = document.getElementById('buscador');
+  const sugerencias = document.getElementById('sugerencias');
+
+  function renderSugerencias(matches) {
+    sugerencias.innerHTML = '';
+    matches.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.className = 'sugerencia';
+      div.setAttribute('role', 'option');
+      div.setAttribute('aria-selected', 'false');
+      div.tabIndex = 0;
+      div.onclick = () => { go(s.ref); };
+      div.onkeydown = (e) => { if (e.key === 'Enter') go(s.ref); };
+      const img = document.createElement('img');
+      img.src = s.img;
+      img.alt = s.nombre;
+      img.className = 'mini';
+      const span = document.createElement('div');
+      span.textContent = s.nombre;
+      div.appendChild(img);
+      div.appendChild(span);
+      sugerencias.appendChild(div);
+    });
+    if (matches.length) sugerencias.classList.add('show');
+    else sugerencias.classList.remove('show');
+  }
+
+  buscador.addEventListener('input', () => {
+    const query = buscador.value.trim().toLowerCase();
+    if (!query) { sugerencias.classList.remove('show'); return; }
+    const matches = series.filter(s => s.nombre.toLowerCase().includes(query));
+    renderSugerencias(matches);
+  });
+
+  buscador.addEventListener('focus', () => {
+    const top = series.slice(0, 6);
+    renderSugerencias(top);
+  });
+
+  document.addEventListener('click', (e) => {
+    const inside = document.querySelector('.buscador-container').contains(e.target);
+    if (!inside) sugerencias.classList.remove('show');
+  });
+
+  // Navegación: esquema personalizado 'go:' con fallback para pruebas en navegador
+  function go(ref) {
+    try {
+      // esquema para la app / WebView
+      window.location.href = "go:" + ref;
+    } catch (err) {
+      console.warn('No se pudo navegar con esquema personalizado, usando fallback.', err);
+      window.location.hash = "go-" + ref;
+    }
+    // fallback adicional (si no hubo navegación)
+    setTimeout(() => {
+      if (!document.hidden) window.location.hash = "go-" + ref;
+    }, 250);
+  }
+
+  function irAShorts() {
+    // diseñado para app; en navegador usa hash como fallback
+    try { window.location.href = "go:shorts"; } catch { window.location.hash = "go-shorts"; }
+  }
+
+  function irADescripcion() {
+    try { window.location.href = "go:IDI4"; } catch { window.location.hash = "go-IDI4"; }
+  }
+</script>
+</body>
+</html>
