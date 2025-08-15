@@ -430,9 +430,10 @@
           <span>${profile.name}</span>
           <span style="font-size:12px; font-style: italic;">${profile.kids ? "Kids" : ""}</span>
         `;
+        // <-- Cambio mínimo solicitado: redirigir a inicio.html al hacer clic en el perfil
         div.onclick = () => {
-          const sectionId = profile.kids ? "IDI3" : "IDI2";
-          window.location.href = "go:" + sectionId;
+          // Redirige a la página de inicio (ejemplo: inicio.html)
+          window.location.href = "inicio.html";
         };
         profilesContainer.appendChild(div);
       });
