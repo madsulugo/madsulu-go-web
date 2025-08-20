@@ -16,28 +16,31 @@
       user-select: none;
     }
 
-    video {
+    .video-container {
+      position: relative; /* importante para que el overlay se posicione sobre el video */
       width: 80%;
       max-width: 900px;
+    }
+
+    video {
+      width: 100%;
       border-radius: 10px;
       outline: none;
       background: black;
       pointer-events: auto;
+      display: block;
     }
 
     /* Overlay en la esquina inferior derecha */
     .overlay {
       position: absolute;
       bottom: 10px;
-      right: 15px;
+      right: 10px;
       text-align: right;
       font-family: Arial, sans-serif;
       color: white;
       font-size: 14px;
-    }
-
-    .overlay p {
-      margin: 5px 0;
+      pointer-events: auto; /* permite clic en el enlace */
     }
 
     .overlay a {
@@ -53,15 +56,17 @@
 </head>
 <body oncontextmenu="return false" onkeydown="bloquearTeclas(event)">
 
-  <video id="video" controls controlsList="nodownload noremoteplayback" disablePictureInPicture>
-    <source src="https://files.catbox.moe/35gj1m.mp4" type="video/mp4">
-    Tu navegador no soporta video HTML5.
-  </video>
+  <div class="video-container">
+    <video id="video" controls controlsList="nodownload noremoteplayback" disablePictureInPicture>
+      <source src="https://files.catbox.moe/35gj1m.mp4" type="video/mp4">
+      Tu navegador no soporta video HTML5.
+    </video>
 
-  <!-- Overlay de marca y soporte -->
-  <div class="overlay">
-    <p>[ESTAS VIENDO MADSULU GO]</p>
-    <p><a href="mailto:madsulugo.soporte@gmail.com">[¿TIENES ALGUN INCONVENIENTE? HAZ CLICK AQUI]</a></p>
+    <!-- Overlay de marca y soporte -->
+    <div class="overlay">
+      <p>[ESTAS VIENDO MADSULU GO]</p>
+      <p><a href="mailto:madsulugo.soporte@gmail.com">[¿TIENES ALGUN INCONVENIENTE? HAZ CLICK AQUI]</a></p>
+    </div>
   </div>
 
   <script>
