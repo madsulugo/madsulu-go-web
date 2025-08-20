@@ -17,11 +17,13 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      text-align: center;
     }
 
     h1 {
       font-size: 4em;
       margin: 0;
+      cursor: pointer;
       opacity: 0;
       animation: fadeIn 2s forwards;
     }
@@ -31,6 +33,20 @@
       margin: 20px 0;
       opacity: 0;
       animation: fadeIn 2s forwards 1s;
+    }
+
+    #easterEgg {
+      margin-top: 20px;
+      font-size: 1.3em;
+      color: #ffcc00;
+      min-height: 40px;
+    }
+
+    .countdown {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: red;
+      animation: blink 1s infinite;
     }
 
     .btn {
@@ -60,11 +76,55 @@
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
   </style>
 </head>
 <body>
-  <h1>⚠️ Error 404</h1>
-  <p>No encontramos esta página en <strong>MadSulu GO</strong> revisa la url (link) de la pagina y vuelve a intentarlo</p>
+  <h1 id="errorTitle">⚠️ Error 404</h1>
+  <p>No encontramos esta página en <strong>MadSulu GO</strong>revisa la url (link) de la pagina y vuelve a intentarlo</p>
+  <div id="easterEgg"></div>
   <a href="inicio.html" class="btn"> Volver a MadSulu GO</a>
+
+  <script>
+    const errorTitle = document.getElementById("errorTitle");
+    const easterEgg = document.getElementById("easterEgg");
+    let clickCount = 0;
+
+    const messages = [
+      "Ya deja de tocarme >⁠.⁠<",
+      "¿Sabes qué es tocar a un error?",
+      "Ya no me toques más plz w",
+      "AHORA SÍ YA ME HARTÉ",
+      "¿SABES QUÉ ES TOCAR A UN DIOS COMO YO?",
+      "REINICIANDO Y REDIRIGIENDO AL INICIO EN "
+    ];
+
+    errorTitle.addEventListener("click", () => {
+      if (clickCount < messages.length - 1) {
+        easterEgg.textContent = messages[clickCount];
+      } else if (clickCount === messages.length - 1) {
+        // contador de 5 segundos
+        let counter = 5;
+        easterEgg.innerHTML = messages[clickCount] + 
+          `<span class="countdown">${counter}</span> segundos...`;
+
+        const interval = setInterval(() => {
+          counter--;
+          if (counter > 0) {
+            easterEgg.innerHTML = messages[clickCount] + 
+              `<span class="countdown">${counter}</span> segundos...`;
+          } else {
+            clearInterval(interval);
+            window.location.href = "inicio.html";
+          }
+        }, 1000);
+      }
+      clickCount++;
+    });
+  </script>
 </body>
 </html>
