@@ -13,6 +13,7 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      user-select: none;
     }
 
     video {
@@ -21,6 +22,32 @@
       border-radius: 10px;
       outline: none;
       background: black;
+      pointer-events: auto;
+    }
+
+    /* Overlay en la esquina inferior derecha */
+    .overlay {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      text-align: right;
+      font-family: Arial, sans-serif;
+      color: white;
+      font-size: 14px;
+    }
+
+    .overlay p {
+      margin: 5px 0;
+    }
+
+    .overlay a {
+      color: #00aaff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .overlay a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -31,13 +58,17 @@
     Tu navegador no soporta video HTML5.
   </video>
 
+  <!-- Overlay de marca y soporte -->
+  <div class="overlay">
+    <p>[ESTAS VIENDO MADSULU GO]</p>
+    <p><a href="mailto:madsulugo.soporte@gmail.com">[¿TIENES ALGUN INCONVENIENTE? HAZ CLICK AQUI]</a></p>
+  </div>
+
   <script>
-    // Bloquear teclas comunes de descarga
     function bloquearTeclas(e) {
-      // Ctrl+S, Ctrl+U, Ctrl+Shift+I, F12, Ctrl+Shift+J
       if (
-        (e.ctrlKey && (e.key === "s" || e.key === "u")) ||
-        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.key === "J" || e.key === "j")) ||
+        (e.ctrlKey && (e.key === "s" || e.key === "u" || e.key === "c")) || 
+        (e.ctrlKey && e.shiftKey && (["I","i","J","j","C","c"].includes(e.key))) ||
         (e.key === "F12")
       ) {
         e.preventDefault();
@@ -46,11 +77,16 @@
       }
     }
 
-    // Desactivar arrastrar el video
-    document.getElementById("video").addEventListener("dragstart", e => e.preventDefault());
+    const video = document.getElementById("video");
 
-    // Prevenir clic derecho sobre el video
-    document.getElementById("video").addEventListener("contextmenu", e => e.preventDefault());
+    video.addEventListener("dragstart", e => e.preventDefault());
+    video.addEventListener("contextmenu", e => e.preventDefault());
+    video.addEventListener("dblclick", e => e.preventDefault());
+
+    document.addEventListener("copy", e => {
+      e.preventDefault();
+      alert("⚠️ Copiar está deshabilitado.");
+    });
   </script>
 
 </body>
