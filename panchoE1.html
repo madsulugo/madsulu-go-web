@@ -1,1 +1,57 @@
-hola prueba
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproductor Seguro</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    video {
+      width: 80%;
+      max-width: 900px;
+      border-radius: 10px;
+      outline: none;
+      background: black;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false" onkeydown="bloquearTeclas(event)">
+
+  <video id="video" controls controlsList="nodownload noremoteplayback" disablePictureInPicture>
+    <source src="https://files.catbox.moe/35gj1m.mp4" type="video/mp4">
+    Tu navegador no soporta video HTML5.
+  </video>
+
+  <script>
+    // Bloquear teclas comunes de descarga
+    function bloquearTeclas(e) {
+      // Ctrl+S, Ctrl+U, Ctrl+Shift+I, F12, Ctrl+Shift+J
+      if (
+        (e.ctrlKey && (e.key === "s" || e.key === "u")) ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.key === "J" || e.key === "j")) ||
+        (e.key === "F12")
+      ) {
+        e.preventDefault();
+        alert("⚠️ Acción bloqueada por seguridad.");
+        return false;
+      }
+    }
+
+    // Desactivar arrastrar el video
+    document.getElementById("video").addEventListener("dragstart", e => e.preventDefault());
+
+    // Prevenir clic derecho sobre el video
+    document.getElementById("video").addEventListener("contextmenu", e => e.preventDefault());
+  </script>
+
+</body>
+</html>
