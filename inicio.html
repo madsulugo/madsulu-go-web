@@ -11,17 +11,14 @@
       background: radial-gradient(ellipse at center, #0a0a0a 0%, #121b2b 100%);
       color: #e0ffe0;
     }
-
     header {
       text-align: center;
       padding: 1rem;
     }
-
     header img {
       max-width: 250px;
       height: auto;
     }
-
     h2 {
       margin: 1rem 0 0.5rem 1rem;
       font-size: 1.3rem;
@@ -29,22 +26,18 @@
       color: #ffffff;
       text-shadow: 0 0 6px rgba(255, 255, 255, 0.6), 0 0 12px rgba(150, 150, 150, 0.4);
     }
-
     .categoria { margin-bottom: 2rem; }
-
     .scroll-row {
       display: flex;
       overflow-x: auto;
       padding: 0 1rem;
       gap: 1rem;
     }
-
     .scroll-row::-webkit-scrollbar { height: 8px; }
     .scroll-row::-webkit-scrollbar-thumb {
       background: rgba(255,255,255,0.08);
       border-radius: 4px;
     }
-
     .serie {
       position: relative;
       flex: 0 0 auto;
@@ -56,58 +49,23 @@
       cursor: pointer;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-
     .serie:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
     }
-
     .serie img {
       width: 100%;
       height: 101px;
       object-fit: cover;
       display: block;
     }
-
     .info { padding: 0.4rem; background: #111; }
-
     .info .nombre {
       font-weight: bold;
       font-size: 0.95rem;
       color: #fff;
     }
-
     .info .edad { font-size: 0.85rem; color: #bbb; }
-
-    .proximamente { opacity: 0.5; cursor: not-allowed; }
-    .proximamente .info::after {
-      content: "PRÓXIMAMENTE";
-      display: block;
-      color: #f88;
-      font-weight: bold;
-      margin-top: 0.3rem;
-    }
-
-    .banner {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      height: 200px;
-      margin: 20px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      padding: 30px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    .banner h2 { margin: 0 0 15px; font-size: 24px; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
-    .banner a { display: inline-block; padding: 8px 16px; border: 2px solid white; border-radius: 10px; text-decoration: none; color: white; font-size: 16px; transition: all 0.3s ease; }
-    .banner a:hover { background: white; color: #111; }
-
     /* Buscador */
     .buscador-container {
       position: relative;
@@ -115,7 +73,6 @@
       margin: 15px auto;
       padding: 0 1rem;
     }
-
     #buscador {
       width: 100%;
       padding: 10px 12px;
@@ -127,7 +84,6 @@
       color: #fff;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
-
     .sugerencias {
       position: absolute;
       top: calc(100% + 8px);
@@ -142,7 +98,6 @@
       z-index: 30;
       box-shadow: 0 8px 24px rgba(0,0,0,0.6);
     }
-
     .sugerencia {
       padding: 10px 12px;
       cursor: pointer;
@@ -152,10 +107,8 @@
       align-items: center;
       gap: 10px;
     }
-
     .sugerencia:last-child { border-bottom: none; }
     .sugerencia:hover { background: rgba(255,255,255,0.03); }
-
     .sugerencia .mini {
       width: 56px;
       height: 36px;
@@ -164,13 +117,36 @@
       flex-shrink: 0;
       border: 1px solid rgba(255,255,255,0.04);
     }
-
     .sugerencias.show { display: block; animation: desplegar 350ms ease; transform-origin: top center; }
     @keyframes desplegar {
       0% { transform: scaleY(0.6); opacity: 0; }
       60% { transform: scaleY(1.03); opacity: 1; }
       100% { transform: scaleY(1); opacity: 1; }
     }
+
+    /* Wide block (misma anchura que buscador y categorías interiores) */
+    .wide-block {
+      max-width: 520px;
+      margin: 20px auto;
+      padding: 0 1rem;
+    }
+    .banner {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      border-radius: 20px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+    .banner h2 { margin: 0 0 10px; font-size: 20px; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
+    .banner a { display: inline-block; padding: 8px 14px; border: 2px solid white; border-radius: 10px; text-decoration: none; color: white; font-size: 14px; transition: all 0.3s ease; }
+    .banner a:hover { background: white; color: #111; }
+
   </style>
 </head>
 <body>
@@ -185,8 +161,6 @@
   <div id="sugerencias" class="sugerencias" role="listbox" aria-label="Sugerencias de series"></div>
 </div>
 
-<!-- Nota: Mensaje ganador eliminado por petición del usuario -->
-
 <!-- Has visto recientemente -->
 <div class="categoria">
   <h2>👀 Has visto recientemente</h2>
@@ -196,79 +170,38 @@
   </div>
 </div>
 
-<!-- CATEGORÍAS Y SERIES (se mantiene el contenido visual que tenías) -->
-<div class="categoria">
-  <h2>🏆 MadSulu GO Cup</h2>
-  <div class="scroll-row">
-    <div class="serie" onclick="location.href='las-fumadas-de-famil.html'">
-      <img src="https://files.catbox.moe/1axsuw.jpg" alt="Las Fumadas de Famil">
-      <div class="info"><div class="nombre">Las Fumadas de Famil</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/dgskst.png" alt="Pancho: El final">
-      <div class="info"><div class="nombre">Pancho: El final</div><div class="edad">+7 años</div></div>
-    </div>
-  </div>
+<!-- Para ti: sección que siempre muestra EXACTAMENTE 3 series -->
+<div class="categoria" id="para-ti-section" aria-live="polite">
+  <h2>😃 Para ti</h2>
+  <div class="scroll-row" id="para-ti-list" style="padding: 0 1rem;"></div>
 </div>
-
 <!-- 🎮 Acción y aventuras -->
 <div class="categoria">
   <h2>🎮 Acción y aventuras</h2>
   <div class="scroll-row">
-    <div class="serie" onclick="location.href='pancho.html'">
+    <div class="serie" onclick="go('pls')">
       <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
       <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='conaco.html'">
+    <div class="serie" onclick="go('cn')">
       <img src="https://files.catbox.moe/zc0ht2.png" alt="Coñaco" />
       <div class="info"><div class="nombre">Coñaco</div><div class="edad">Adolescentes</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='demonic-legends.html'">
+    <div class="serie" onclick="go('dlr')">
       <img src="https://files.catbox.moe/2qikmp.png" alt="Demonic Legends" />
       <div class="info"><div class="nombre">Demonic Legends</div><div class="edad">Adolescentes</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='countrytubers-multiverso.html'">
+    <div class="serie" onclick="go('ctm')">
       <img src="https://files.catbox.moe/72hgd3.png" alt="CountryTubers Multiverso" />
       <div class="info"><div class="nombre">CountryTubers Multiverso</div><div class="edad">+7 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='las-fumadas-de-famil.html'">
+    <div class="serie" onclick="go('lff')">
       <img src="https://files.catbox.moe/1axsuw.jpg" alt="Las Fumadas de Famil" />
       <div class="info"><div class="nombre">Las Fumadas de Famil</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/dgskst.png" alt="Pancho: El final" />
-      <div class="info"><div class="nombre">Pancho: El final</div><div class="edad">+7 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/8tlgjo.png" alt="Venganza europea" />
-      <div class="info"><div class="nombre">Venganza europea</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/apa50t.png" alt="The Fr13nDzH1p Tapes" />
-      <div class="info"><div class="nombre">The Fr13nDzH1p Tapes</div><div class="edad">Adolescentes</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/q56yqg.png" alt="Locura por el multiverso" />
-      <div class="info"><div class="nombre">Locura por el multiverso</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/r5734h.png" alt="Oh dios: La película" />
-      <div class="info"><div class="nombre">Oh dios: La película</div><div class="edad">Adolescentes</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/uisvhx.png" alt="Joshua 2D Prime" />
-      <div class="info"><div class="nombre">Joshua 2D Prime</div><div class="edad">+7 años</div></div>
     </div>
   </div>
 </div>
@@ -277,49 +210,29 @@
 <div class="categoria">
   <h2>🌐 Universos extraños y fantasía</h2>
   <div class="scroll-row">
-    <div class="serie" onclick="location.href='pancho.html'">
+    <div class="serie" onclick="go('pls')">
       <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
       <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='las-californias.html'">
+    <div class="serie" onclick="go('lc')">
       <img src="https://files.catbox.moe/0b1zji.png" alt="Las Californias" />
       <div class="info"><div class="nombre">Las Californias</div><div class="edad">+10 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='californias-classic.html'">
+    <div class="serie" onclick="go('lcc')">
       <img src="https://files.catbox.moe/h8cro0.png" alt="CaliFornias Classic" />
       <div class="info"><div class="nombre">CaliFornias Classic</div><div class="edad">Todos</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='countrytubers-multiverso.html'">
+    <div class="serie" onclick="go('ctm')">
       <img src="https://files.catbox.moe/72hgd3.png" alt="CountryTubers Multiverso" />
       <div class="info"><div class="nombre">CountryTubers Multiverso</div><div class="edad">+7 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='demonic-legends.html'">
-      <img src="https://files.catbox.moe/2qikmp.png" alt="Demonic Legends" />
-      <div class="info"><div class="nombre">Demonic Legends</div><div class="edad">Adolescentes</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/rzgjof.jpg" alt="LAEF" />
-      <div class="info"><div class="nombre">LAEF</div><div class="edad">Adolescentes</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/prsupd.png" alt="Chetto: La serie" />
-      <div class="info"><div class="nombre">Chetto: La serie</div><div class="edad">+7 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/atnfkz.png" alt="Una película de Countryballs" />
-      <div class="info"><div class="nombre">Una película de Countryballs</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/dgskst.png" alt="Pancho: El final" />
-      <div class="info"><div class="nombre">Pancho: El final</div><div class="edad">+7 años</div></div>
+    <div class="serie" onclick="go('skb')">
+      <img src="https://files.catbox.moe/y901fw.png" alt="SkibidiBalls" />
+      <div class="info"><div class="nombre">SkibidiBalls</div><div class="edad">+7 años</div></div>
     </div>
   </div>
 </div>
@@ -328,85 +241,59 @@
 <div class="categoria">
   <h2>🤣 Comedias y parodias</h2>
   <div class="scroll-row">
-    <div class="serie" onclick="location.href='pancho.html'">
+    <div class="serie" onclick="go('pls')">
       <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
       <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='batalla-countrytuber.html'">
+    <div class="serie" onclick="go('btc')">
       <img src="https://files.catbox.moe/5ym1pj.png" alt="Batalla Countrytuber" />
       <div class="info"><div class="nombre">Batalla Countrytuber</div><div class="edad">+10 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='el-bebe-dinosaurio.html'">
+    <div class="serie" onclick="go('ebd')">
       <img src="https://files.catbox.moe/wr6k3n.png" alt="El bebé dinosaurio" />
       <div class="info"><div class="nombre">El bebé dinosaurio</div><div class="edad">Todos</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='mjaja-series.html'">
+    <div class="serie" onclick="go('MJa')">
       <img src="https://files.catbox.moe/ulh1ly.png" alt="MJaja Series" />
       <div class="info"><div class="nombre">MJaja Series</div><div class="edad">+10 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='las-fumadas-de-famil.html'">
-      <img src="https://files.catbox.moe/1axsuw.jpg" alt="Las Fumadas de Famil" />
-      <div class="info"><div class="nombre">Las Fumadas de Famil</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie" onclick="location.href='countrytubers-multiverso.html'">
-      <img src="https://files.catbox.moe/72hgd3.png" alt="CountryTubers Multiverso" />
-      <div class="info"><div class="nombre">CountryTubers Multiverso</div><div class="edad">+7 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/38wwos.png" alt="Chulin's Adventure Mania" />
-      <div class="info"><div class="nombre">Adventure Mania</div><div class="edad">Todos</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/m6uc4r.png" alt="Viajes con Chulin" />
-      <div class="info"><div class="nombre">Viajes con Chulin</div><div class="edad">Todos</div></div>
+    <div class="serie" onclick="go('skb')">
+      <img src="https://files.catbox.moe/y901fw.png" alt="SkibidiBalls" />
+      <div class="info"><div class="nombre">SkibidiBalls</div><div class="edad">+7 años</div></div>
     </div>
   </div>
 </div>
-
 <!-- 󰔡 MadSulu Kids -->
 <div class="categoria">
   <h2>󰔡 MadSulu Kids</h2>
   <div class="scroll-row">
-    <div class="serie" onclick="location.href='pancho.html'">
+    <div class="serie" onclick="go('pls')">
       <img src="https://files.catbox.moe/bg7dhd.png" alt="Pancho" />
       <div class="info"><div class="nombre">Pancho</div><div class="edad">+7 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='las-californias.html'">
+    <div class="serie" onclick="go('lc')">
       <img src="https://files.catbox.moe/0b1zji.png" alt="Las Californias" />
       <div class="info"><div class="nombre">Las Californias</div><div class="edad">+10 años</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='californias-classic.html'">
+    <div class="serie" onclick="go('lcc')">
       <img src="https://files.catbox.moe/h8cro0.png" alt="CaliFornias Classic" />
       <div class="info"><div class="nombre">CaliFornias Classic</div><div class="edad">Todos</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='el-bebe-dinosaurio.html'">
+    <div class="serie" onclick="go('ebd')">
       <img src="https://files.catbox.moe/wr6k3n.png" alt="El bebé dinosaurio" />
       <div class="info"><div class="nombre">El bebé dinosaurio</div><div class="edad">Todos</div></div>
     </div>
 
-    <div class="serie" onclick="location.href='mjaja-series.html'">
-      <img src="https://files.catbox.moe/ulh1ly.png" alt="MJaja Series" />
-      <div class="info"><div class="nombre">MJaja Series</div><div class="edad">+10 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/prsupd.png" alt="Chetto: La serie" />
-      <div class="info"><div class="nombre">Chetto: La serie</div><div class="edad">+7 años</div></div>
-    </div>
-
-    <div class="serie proximamente">
-      <img src="https://files.catbox.moe/uisvhx.png" alt="Joshua 2D Prime" />
-      <div class="info"><div class="nombre">Joshua 2D Prime</div><div class="edad">+7 años</div></div>
+    <div class="serie" onclick="go('skb')">
+      <img src="https://files.catbox.moe/y901fw.png" alt="SkibidiBalls" />
+      <div class="info"><div class="nombre">SkibidiBalls</div><div class="edad">+7 años</div></div>
     </div>
   </div>
 </div>
@@ -415,268 +302,193 @@
 <div class="categoria">
   <h2>🎨 Creador a creador</h2>
   <div class="scroll-row">
-    <div class="serie" onclick="location.href='dimoxtube.html'">
+    <div class="serie" onclick="go('dt')">
       <img src="https://files.catbox.moe/rlxo4n.png" alt="Dimoxtube" />
       <div class="info"><div class="nombre">Dimoxtube</div><div class="edad">-</div></div>
     </div>
   </div>
 </div>
-
-<script>
-  (function(){
-    // KEY usada por el selector de perfiles (si otra pantalla la guarda)
-    const ACTIVE_KEY = 'madsulu_active_profile';
-
-    // Helper para obtener perfil activo guardado en localStorage (objeto)
-    function getActiveProfile() {
-      try {
-        const raw = localStorage.getItem(ACTIVE_KEY);
-        if (!raw) return null;
-        return JSON.parse(raw);
-      } catch (e) {
-        console.warn('Error parseando ACTIVE_KEY', e);
-        return null;
-      }
-    }
-
-    // Devuelve la clave de recientes para el usuario actual (o guest)
-    function recientesKeyForActive() {
-      const active = getActiveProfile();
-      if (!active) return 'madsulu_recientes_guest';
-      // usamos índice cuando exista (más estable); si no, usamos nombre sanitizado
-      const id = (typeof active.index === 'number') ? ('idx' + active.index) : ('name_' + String(active.name || 'unk').replace(/\s+/g,'_'));
-      return 'madsulu_recientes_' + id;
-    }
-
-    // Helper: obtén la lista global de series
-    function getAllSeries(){
-      try{
-        if (typeof series !== 'undefined' && Array.isArray(series)) return series;
-      }catch(e){}
-      if (window.series && Array.isArray(window.series)) return window.series;
-      if (window._series && Array.isArray(window._series)) return window._series;
-      return [];
-    }
-
-    // Convierte un nombre de serie/ref en nombre de archivo .html (mismo algoritmo usado en el HTML estático)
-    function refToFilename(ref) {
-      const s = (series && Array.isArray(series)) ? series.find(x => x.ref === ref) : null;
-      if (s && s.nombre) {
-        const normalized = s.nombre
-          .toLowerCase()
-          .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
-          .replace(/[^a-z0-9]+/g, '-') // no alfanum -> guion
-          .replace(/^-+|-+$/g, ''); // trim guiones
-        return normalized + '.html';
-      }
-      // casos especiales
-      if (ref === 'shorts') return 'shorts.html';
-      if (ref === 'IDI4') return 'descripcion.html';
-      return ref + '.html';
-    }
-
-    // Añade un ref a los recientes **del usuario activo**
-    function addToRecientes(ref){
-      try{
-        const all = getAllSeries();
-        const s = (all.find ? all.find(x => x.ref === ref) : undefined) || { nombre: ref, img: '' };
-        const key = recientesKeyForActive();
-        let arr = JSON.parse(localStorage.getItem(key) || '[]');
-        // eliminar duplicados
-        arr = arr.filter(a => a.ref !== ref);
-        // añadir al inicio (guardamos también nombre e imagen actuales si existen)
-        arr.unshift({ ref: s.ref || ref, nombre: s.nombre || ref, img: s.img || '', ts: Date.now() });
-        // limitar a 8 items
-        if (arr.length > 8) arr = arr.slice(0,8);
-        localStorage.setItem(key, JSON.stringify(arr));
-        renderRecientes(); // refrescar en pantalla
-      } catch (e) {
-        console.warn('Error guardando recientes', e);
-      }
-    }
-
-    // Render de los recientes del usuario activo
-    function renderRecientes(){
-      const container = document.getElementById('recientes-list');
-      if (!container) return;
-      const key = recientesKeyForActive();
-      const arr = JSON.parse(localStorage.getItem(key) || '[]');
-      container.innerHTML = '';
-      if (!arr.length) {
-        // Si hay perfil activo mostramos mensaje personalizado
-        const active = getActiveProfile();
-        const quien = active ? (active.name || 'este usuario') : 'este dispositivo (invitado)';
-        container.innerHTML = '<p style="color:#bbb;padding:12px">No has visto nada recientemente para ' + quien + '.</p>';
-        return;
-      }
-      const all = getAllSeries();
-      arr.forEach(item => {
-        // intenta completar nombre/img usando la lista de series si falta o es genérico
-        const match = (all.find ? all.find(s => s.ref === item.ref) : undefined) || {};
-        const nombre = match.nombre || item.nombre || item.ref;
-        const img = match.img || item.img || 'https://files.catbox.moe/bg7dhd.png';
-
-        const div = document.createElement('div');
-        div.className = 'serie';
-        div.style.width = '140px';
-        div.style.marginRight = '10px';
-        div.onclick = () => { window.location.href = refToFilename(item.ref); };
-        div.innerHTML = '<img src="'+img+'" alt="'+nombre+'">'+
-                        '<div class="info"><div class="nombre">'+nombre+'</div></div>';
-        container.appendChild(div);
-      });
-    }
-
-    // Limpiar los recientes **del usuario activo**
-    function clearRecientesActive() {
-      const key = recientesKeyForActive();
-      localStorage.removeItem(key);
-      renderRecientes();
-    }
-
-    // Inicializar
-    document.addEventListener('DOMContentLoaded', () => {
-      renderRecientes();
-
-      const clearBtn = document.getElementById('clearRecientes');
-      if (clearBtn) clearBtn.addEventListener('click', () => {
-        if (confirm('¿Limpiar el historial reciente de este usuario?')) clearRecientesActive();
-      });
-
-      // Exponer addToRecientes y renderRecientes por si se quiere usar manualmente desde consola u otros scripts
-      window.addToRecientes = addToRecientes;
-      window.renderRecientes = renderRecientes;
-    });
-
-    // Si otro script (por ejemplo la pantalla de selección de perfil) cambia el perfil activo,
-    // escuchamos storage para detectar cambios en ACTIVE_KEY y actualizar la lista.
-    window.addEventListener('storage', (ev) => {
-      if (ev.key === ACTIVE_KEY) {
-        // perfil cambiado en otra pestaña/ventana; refrescar recientes
-        renderRecientes();
-      }
-    });
-
-    // También, si la app cambia localStorage en la misma pestaña (sin evento storage),
-    // podemos observar periódicamente la clave para detectar cambios y actualizar UI.
-    let lastActiveRaw = localStorage.getItem(ACTIVE_KEY);
-    setInterval(() => {
-      const nowRaw = localStorage.getItem(ACTIVE_KEY);
-      if (nowRaw !== lastActiveRaw) {
-        lastActiveRaw = nowRaw;
-        renderRecientes();
-      }
-    }, 800);
-
-  })();
-</script>
-
-<!-- SHORTS BANNER -->
-<div class="banner" style="background: linear-gradient(120deg, rgba(255,69,0,0.6), rgba(142,45,226,0.6)), url('https://files.catbox.moe/6ql4b0.gif') center/cover no-repeat;">
-  <div style="z-index: 2;">
-    <h2>descubre <br>madsulu fast momentos rapidos de series.</h2>
-    <a href="#" class="shorts-link" onclick="location.href='shorts.html'; return false;">Ir a Shorts</a>
+<!-- SHORTS BANNER (ahora con mismo ancho que buscador/categorías interiores) -->
+<div class="wide-block">
+  <div class="banner" style="background: linear-gradient(120deg, rgba(255,69,0,0.6), rgba(142,45,226,0.6)), url('https://files.catbox.moe/6ql4b0.gif') center/cover no-repeat;">
+    <div style="z-index: 2;">
+      <h2>descubre <br>madsulu fast momentos rapidos de series.</h2>
+      <a href="#" class="shorts-link" onclick="irAShorts(); return false;">Ir a Shorts</a>
+    </div>
   </div>
 </div>
 
-<!-- INFO CREADORES BANNER -->
-<div class="banner" style="background: linear-gradient(120deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://files.catbox.moe/9wwyaq.png') center/cover no-repeat;">
-  <div style="z-index: 2;">
-    <h2>Mira la información<br>de nuestros creadores.</h2>
-    <a href="#" onclick="location.href='descripcion.html'; return false;">ver descripcion</a>
+<!-- INFO CREADORES BANNER (mismo ancho) -->
+<div class="wide-block">
+  <div class="banner" style="background: linear-gradient(120deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://files.catbox.moe/9wwyaq.png') center/cover no-repeat;">
+    <div style="z-index: 2;">
+      <h2>Mira la información<br>de nuestros creadores.</h2>
+      <a href="#" onclick="irADescripcion(); return false;">ver descripcion</a>
+    </div>
   </div>
 </div>
 
 <script>
-  // Lista completa de series para el buscador (la misma que antes)
+  // normaliza referencias (quita "go:" y devuelve en lower-case)
+  function normalizeRef(raw){
+    if(!raw && raw !== 0) return '';
+    return String(raw).replace(/^go:/i,'').trim().toLowerCase();
+  }
+
+  // Lista completa de series (PRÓXIMAMENTE ELIMINADAS: no están aquí)
   const series = [
-    { nombre: "Pancho", ref: "pls", img: "https://files.catbox.moe/bg7dhd.png" },
-    { nombre: "Las Fumadas de Famil", ref: "lff", img: "https://files.catbox.moe/1axsuw.jpg" },
-    { nombre: "Coñaco", ref: "cn", img: "https://files.catbox.moe/zc0ht2.png" },
-    { nombre: "Demonic Legends", ref: "dlr", img: "https://files.catbox.moe/2qikmp.png" },
-    { nombre: "CountryTubers Multiverso", ref: "ctm", img: "https://files.catbox.moe/72hgd3.png" },
-    { nombre: "Las Californias", ref: "lc", img: "https://files.catbox.moe/0b1zji.png" },
-    { nombre: "CaliFornias Classic", ref: "lcc", img: "https://files.catbox.moe/h8cro0.png" },
-    { nombre: "Batalla Countrytuber", ref: "btc", img: "https://files.catbox.moe/5ym1pj.png" },
-    { nombre: "El bebé dinosaurio", ref: "ebd", img: "https://files.catbox.moe/wr6k3n.png" },
-    { nombre: "MJaja Series", ref: "MJa", img: "https://files.catbox.moe/ulh1ly.png" },
-    { nombre: "Dimoxtube", ref: "dt", img: "https://files.catbox.moe/rlxo4n.png" },
-    { nombre: "Pancho: El final", ref: "pf", img: "https://files.catbox.moe/dgskst.png" },
-    { nombre: "Venganza europea", ref: "ve", img: "https://files.catbox.moe/8tlgjo.png" },
-    { nombre: "The Fr13nDzH1p Tapes", ref: "fr", img: "https://files.catbox.moe/apa50t.png" },
-    { nombre: "Locura por el multiverso", ref: "lpm", img: "https://files.catbox.moe/q56yqg.png" },
-    { nombre: "Oh dios: La película", ref: "od", img: "https://files.catbox.moe/r5734h.png" },
-    { nombre: "Joshua 2D Prime", ref: "j2p", img: "https://files.catbox.moe/uisvhx.png" },
-    { nombre: "LAEF", ref: "laef", img: "https://files.catbox.moe/rzgjof.jpg" },
-    { nombre: "Chetto: La serie", ref: "chetto", img: "https://files.catbox.moe/prsupd.png" },
-    { nombre: "Una película de Countryballs", ref: "cbmov", img: "https://files.catbox.moe/atnfkz.png" },
-    { nombre: "Adventure Mania", ref: "advm", img: "https://files.catbox.moe/38wwos.png" },
-    { nombre: "Viajes con Chulin", ref: "vch", img: "https://files.catbox.moe/m6uc4r.png" }
+    { nombre: "Pancho", ref: "pls", img: "https://files.catbox.moe/bg7dhd.png", descKey: "pancho", edad: "+7 años" },
+    { nombre: "Las Fumadas de Famil", ref: "lff", img: "https://files.catbox.moe/1axsuw.jpg", descKey: "fumadas", edad: "+10 años" },
+    { nombre: "Coñaco", ref: "cn", img: "https://files.catbox.moe/zc0ht2.png", descKey: "conaco", edad: "Adolescentes" },
+    { nombre: "Demonic Legends", ref: "dlr", img: "https://files.catbox.moe/2qikmp.png", descKey: "dlr", edad: "Adolescentes" },
+    { nombre: "CountryTubers Multiverso", ref: "ctm", img: "https://files.catbox.moe/72hgd3.png", descKey: "ctm", edad: "+7 años" },
+    { nombre: "Las Californias", ref: "lc", img: "https://files.catbox.moe/0b1zji.png", descKey: "californias", edad: "+10 años" },
+    { nombre: "CaliFornias Classic", ref: "lcc", img: "https://files.catbox.moe/h8cro0.png", descKey: "lcc", edad: "Todos" },
+    { nombre: "Batalla Countrytuber", ref: "btc", img: "https://files.catbox.moe/5ym1pj.png", descKey: "btc", edad: "+10 años" },
+    { nombre: "El bebé dinosaurio", ref: "ebd", img: "https://files.catbox.moe/wr6k3n.png", descKey: "ebd", edad: "Todos" },
+    { nombre: "MJaja Series", ref: "MJa", img: "https://files.catbox.moe/ulh1ly.png", descKey: "mjaja", edad: "+10 años" },
+    { nombre: "Dimoxtube", ref: "dt", img: "https://files.catbox.moe/rlxo4n.png", descKey: "dt", edad: "-" },
+    { nombre: "SkibidiBalls", ref: "skb", img: "https://files.catbox.moe/y901fw.png", descKey: "skibidi", edad: "+7 años" }
   ];
 
-  const buscador = document.getElementById('buscador');
-  const sugerencias = document.getElementById('sugerencias');
+  // Descripciones internas (solo para algoritmo)
+  const descriptions = {
+    pancho: "Pancho es un hot dog vegetariano que simplemente vive una vida normal, pero eso cambió cuando mientras hablaba con su amigo Hamburguer los dos fueron secuestrados",
+    californias: "3 hermanos separados por fronteras y por guerras han decidido reconciliarse pero se van a atravesar con muchos problemas,revelaciones y una horrible pesadilla",
+    conaco: "Todo comienza cuando Marlon, un ex trabajador de un campo de limones con una gran deuda, ... juegos infantiles pero mortales.",
+    btc: "una batalla de diferentes countrytubers donde haran equipos y tendran que pasar los diferentes retos como las votaciones de la comunidad y el ultimo equipo es el ganador",
+    lcc: "Las californias clasic es la primera versión de la serie de las californias ...",
+    ebd: "Un grupo de preadolescentes con una hora libre en la escuela, ... el contenido mas random de todo MadSulu GO",
+    mjaja: "Cortos para pasar el tiempo cuando no tengas nada que hacer y estes aburrido",
+    dlr: "Cinco héroes llegan a una isla en guerra entre religiones y demonios. ... ThugMan, el criminal más peligroso del mundo.",
+    fumadas: "Famil muestra lugares raros, los cuales tiene entre humor funable y humor divertido.",
+    ctm: "Countrytubers de la Nada entran al mapa del mundo, ...",
+    dt: "Parte social de MadSulu GO. Herramienta para subir tus propias series o chatear junto a otros amantes",
+    skibidi: "Una serie sobre una serie ya existente llamada Skibidi Toilet, pero en versión Countryballs."
+  };
 
-  function renderSugerencias(matches) {
-    sugerencias.innerHTML = '';
-    matches.forEach((s, i) => {
-      const div = document.createElement('div');
-      div.className = 'sugerencia';
-      div.setAttribute('role', 'option');
-      div.setAttribute('aria-selected', 'false');
-      div.tabIndex = 0;
-      div.onclick = () => { window.location.href = refToFilename(s.ref); };
-      div.onkeydown = (e) => { if (e.key === 'Enter') window.location.href = refToFilename(s.ref); };
-      const img = document.createElement('img');
-      img.src = s.img;
-      img.alt = s.nombre;
-      img.className = 'mini';
-   
-      const span = document.createElement('div');
-      span.textContent = s.nombre;
-      div.appendChild(img);
-      div.appendChild(span);
-      sugerencias.appendChild(div);
-    });
-    if (matches.length) sugerencias.classList.add('show');
-    else sugerencias.classList.remove('show');
-  }
+  // KEY usada por el selector de perfiles (si otra pantalla la guarda)
+  const ACTIVE_KEY = 'madsulu_active_profile';
 
-  buscador.addEventListener('input', () => {
-    const query = buscador.value.trim().toLowerCase();
-    if (!query) { sugerencias.classList.remove('show'); return; }
-    const matches = series.filter(s => s.nombre.toLowerCase().includes(query));
-    renderSugerencias(matches);
-  });
-
-  buscador.addEventListener('focus', () => {
-    const top = series.slice(0, 6);
-    renderSugerencias(top);
-  });
-
-  document.addEventListener('click', (e) => {
-    const inside = document.querySelector('.buscador-container').contains(e.target);
-    if (!inside) sugerencias.classList.remove('show');
-  });
-
-  // refToFilename ya definido más arriba; la función se vuelve a declarar aquí para que esté disponible
-  function refToFilename(ref) {
-    const s = (series && Array.isArray(series)) ? series.find(x => x.ref === ref) : null;
-    if (s && s.nombre) {
-      const normalized = s.nombre
-        .toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      return normalized + '.html';
+  function getActiveProfile() {
+    try {
+      const raw = localStorage.getItem(ACTIVE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn('Error parseando ACTIVE_KEY', e);
+      return null;
     }
-    if (ref === 'shorts') return 'shorts.html';
-    if (ref === 'IDI4') return 'descripcion.html';
-    return ref + '.html';
   }
 
-  // Cuando el usuario escribe o selecciona sugerencia, navegamos al archivo HTML correspondiente.
-</script>
+  // RECENTES por usuario
+  function recientesKeyForActive() {
+    const active = getActiveProfile();
+    if (!active) return 'madsulu_recientes_guest';
+    const id = (typeof active.index === 'number') ? ('idx' + active.index) : ('name_' + String(active.name || 'unk').replace(/\s+/g,'_'));
+    return 'madsulu_recientes_' + id;
+  }
 
-</body>
-</html>
+  function getAllSeries(){
+    return window.series || series || [];
+  }
+
+  // --- RENDER "Para ti" (exactamente 3 series)
+  function renderParaTi(){
+    const container = document.getElementById('para-ti-list');
+    if (!container) return;
+    container.innerHTML = '';
+    const key = recientesKeyForActive();
+    let recientes = JSON.parse(localStorage.getItem(key) || '[]');
+    // normalizar recientes refs
+    recientes = recientes.map(r => ({...r, ref: normalizeRef(r.ref)}));
+
+  // build candidate pool
+  const pool = getAllSeries().slice();
+  const recientesRefs = recientes.map(r => normalizeRef(r.ref));
+  let picks = [];
+
+  if (recientes.length){
+    const combined = recientes.map(r => {
+      const s = pool.find(p => normalizeRef(p.ref) === normalizeRef(r.ref)) || {};
+      return descriptions[s.descKey] || '';
+    }).join(' ').toLowerCase();
+
+    const scores = pool.map(p => {
+      if (recientesRefs.includes(normalizeRef(p.ref))) return {ref:p.ref, score:-1};
+      const desc = (descriptions[p.descKey] || '').toLowerCase();
+      const words = desc.split(/\W+/).filter(Boolean);
+      let score = 0;
+      for (const w of words) if (combined.includes(w) && w.length>3) score++;
+      return {ref:p.ref, score};
+    }).sort((a,b)=> b.score - a.score);
+
+    for (const s of scores){
+      if (s.score<=0) break;
+      const item = pool.find(p => normalizeRef(p.ref) === normalizeRef(s.ref));
+      if (item) picks.push(item);
+      if (picks.length>=3) break;
+    }
+  }
+
+  // fill with randoms
+  const remaining = pool.filter(p => !picks.find(x=>normalizeRef(x.ref)===normalizeRef(p.ref)));
+  while (picks.length < 3 && remaining.length){
+    const idx = Math.floor(Math.random()*remaining.length);
+    picks.push(remaining.splice(idx,1)[0]);
+  }
+
+  picks = picks.slice(0,3);
+
+  // render
+  picks.forEach(item=>{
+    const div = document.createElement('div');
+    div.className='serie';
+    div.style.width='140px';
+    div.style.marginRight='10px';
+    div.onclick = () => { window.go && window.go(item.ref); };
+    const edad = item.edad || '+7 años';
+    div.innerHTML = '<img src="'+(item.img||'https://files.catbox.moe/bg7dhd.png')+'" alt="'+item.nombre+'">'+
+                    '<div class="info"><div class="nombre">'+item.nombre+'</div><div class="edad">'+edad+'</div></div>';
+    container.appendChild(div);
+  });
+}
+
+  // Añade un ref a los recientes **del usuario activo** (normaliza ref)
+  function addToRecientes(rawRef){
+    try{
+      const nref = normalizeRef(rawRef);
+      const all = getAllSeries();
+      const s = (all.find ? all.find(x => normalizeRef(x.ref) === nref) : undefined) || { nombre: nref, img: '' };
+      const key = recientesKeyForActive();
+      let arr = JSON.parse(localStorage.getItem(key) || '[]');
+      arr = arr.filter(a => normalizeRef(a.ref) !== nref);
+      arr.unshift({ ref: nref, nombre: s.nombre || nref, img: s.img || '', ts: Date.now() });
+      if (arr.length > 8) arr = arr.slice(0,8);
+      localStorage.setItem(key, JSON.stringify(arr));
+      renderRecientes();
+      renderParaTi();
+    } catch (e) {
+      console.warn('Error guardando recientes', e);
+    }
+  }
+
+  // Render recientes (usa matching case-insensitive)
+  function renderRecientes(){
+    const container = document.getElementById('recientes-list');
+    if (!container) return;
+    const key = recientesKeyForActive();
+    const arrRaw = JSON.parse(localStorage.getItem(key) || '[]');
+    const arr = arrRaw.map(a => ({...a, ref: normalizeRef(a.ref), nombre: (a.nombre||'').replace(/^go:/i,'')}));
+    container.innerHTML = '';
+    if (!arr.length) {
+      const active = getActiveProfile();
+      const quien = active ? (active.name || 'este usuario') : 'este dispositivo (invitado)';
+      container.innerHTML = '<p style="color:#bbb;padding:12px">No has visto nada recientemente para ' + quien + '.</p>';
+      return;
+    }
+    const all = getAllSeries();
+    arr.forEach(item => {
+      const match = (all.find ? all.find(s => normalizeRef(s.ref) === normalizeRef(item.ref)) : undefined) || {};
+      const nombre = match.nombre || item.nombre || item.ref;
+      const img = match.img || item.img || 'ht
