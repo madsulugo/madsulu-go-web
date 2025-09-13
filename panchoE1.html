@@ -29,9 +29,9 @@
       outline: none;
       background: black;
       display: block;
+      max-height: 60vh;
     }
 
-    /* Texto debajo del video */
     .mensaje {
       margin-top: 15px;
       text-align: center;
@@ -48,21 +48,28 @@
       font-weight: bold;
     }
 
-    .mensaje a {
+    .mensaje button {
       display: inline-block;
-      margin-top: 5px;
+      margin: 5px;
       padding: 8px 15px;
       background-color: #00aaff;
       color: white;
-      text-decoration: none;
+      border: none;
       border-radius: 8px;
-      transition: transform 0.2s, background-color 0.2s;
+      cursor: pointer;
       font-weight: bold;
+      transition: transform 0.2s, background-color 0.2s;
     }
 
-    .mensaje a:hover {
+    .mensaje button:hover {
       background-color: #0090cc;
       transform: scale(1.05);
+    }
+
+    /* Ocultar inicialmente los botones */
+    #opciones {
+      display: none;
+      margin-top: 10px;
     }
 
     @keyframes pulse {
@@ -80,10 +87,15 @@
       Tu navegador no soporta video HTML5.
     </video>
 
-    <!-- Mensaje debajo del video -->
     <div class="mensaje">
-      <p>ESTAS VIENDO MADSULU GO</p>
-      <p><a href="mailto:madsulugo.soporte@gmail.com">¿TIENES ALGUN INCONVENIENTE? HAZ CLICK AQUI</a></p>
+      <p>ESTÁS VIENDO MADSULU GO</p>
+      <p>¿TIENES ALGÚN INCONVENIENTE? <button id="mostrarOpcionesBtn">HAZ CLICK AQUÍ</button></p>
+
+      <!-- Botones ocultos -->
+      <div id="opciones">
+        <button id="correoBtn">Mostrar & Copiar Correo</button>
+        <button id="discordBtn">Ir al Servidor de Discord</button>
+      </div>
     </div>
   </div>
 
@@ -95,7 +107,7 @@
         (e.key === "F12")
       ) {
         e.preventDefault();
-        alert("⚠️ Acción bloqueada por seguridad.");
+        mostrarAlerta("⚠️ Acción bloqueada por seguridad.");
         return false;
       }
     }
@@ -108,7 +120,47 @@
 
     document.addEventListener("copy", e => {
       e.preventDefault();
-      alert("⚠️ Copiar está deshabilitado.");
+      mostrarAlerta("⚠️ Copiar está deshabilitado.");
+    });
+
+    // Función de alerta personalizada
+    function mostrarAlerta(msg) {
+      const alerta = document.createElement("div");
+      alerta.textContent = msg;
+      alerta.style.position = "fixed";
+      alerta.style.bottom = "20px";
+      alerta.style.left = "50%";
+      alerta.style.transform = "translateX(-50%)";
+      alerta.style.backgroundColor = "#ff416c";
+      alerta.style.padding = "10px 20px";
+      alerta.style.borderRadius = "8px";
+      alerta.style.boxShadow = "0 0 10px rgba(255,65,108,0.6)";
+      alerta.style.color = "#fff";
+      alerta.style.zIndex = "1000";
+      document.body.appendChild(alerta);
+      setTimeout(() => alerta.remove(), 3000);
+    }
+
+    // Mostrar/ocultar opciones al hacer click
+    const mostrarOpcionesBtn = document.getElementById("mostrarOpcionesBtn");
+    const opciones = document.getElementById("opciones");
+    mostrarOpcionesBtn.addEventListener("click", () => {
+      opciones.style.display = opciones.style.display === "none" ? "block" : "none";
+    });
+
+    // Botón de correo
+    const correoBtn = document.getElementById("correoBtn");
+    const correo = "madsulugo.soporte@gmail.com";
+    correoBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(correo).then(() => {
+        mostrarAlerta(`Correo copiado: ${correo}`);
+      });
+    });
+
+    // Botón de Discord
+    const discordBtn = document.getElementById("discordBtn");
+    discordBtn.addEventListener("click", () => {
+      window.open("https://discord.gg/2jRpSmD5gC", "_blank");
     });
   </script>
 
